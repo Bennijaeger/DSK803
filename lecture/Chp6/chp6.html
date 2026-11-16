@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="chp6_files/libs/clipboard/clipboard.min.js"></script>
+<script src="chp6_files/libs/quarto-html/tabby.min.js"></script>
+<script src="chp6_files/libs/quarto-html/popper.min.js"></script>
+<script src="chp6_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="chp6_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="chp6_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="chp6_files/libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.11.9">
+
+  <meta name="author" content="Benjamin Jäger">
+  <title>Chapter 6: Inference for categorical data</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="chp6_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="chp6_files/libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="chp6_files/libs/revealjs/dist/theme/quarto-ff4cebf2bb8d1e4af926f623b02fadf8.css">
+  <link href="chp6_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="chp6_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="chp6_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="chp6_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section class="quarto-title-block center">
+  <h1 class="title">Chapter 6: Inference for categorical data</h1>
+  <p class="author">Benjamin Jäger</p>
+  <div class="footer attribution"><p>Slides first developed by Mine Çetinkaya-Rundel. Derivative of OpenIntro slides, shared under a <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC BY-SA licence</a>.</p></div>
+</section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Inference for a single proportion</h1>
+<!-- source: material/6-1_single_prop -->
+</section>
+<section class="slide level2 scrollable">
+<h2></h2>
+<div class="pq">
+<p>Two scientists want to know if a certain drug is effective against high blood pressure. The first scientist wants to give the drug to 1000 people with high blood pressure and see how many of them experience lower blood pressure levels. The second scientist wants to give the drug to 500 people with high blood pressure, and not give the drug to another 500 people with high blood pressure, and see how many in both groups experience lower blood pressure levels. Which is the better way to test this drug?</p>
+</div>
+<ol type="a">
+<li>All 1000 get the drug</li>
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2">500 get the drug, 500 don’t</span></li>
+</ol>
+</section>
+<section class="slide level2">
+<h2>Results from the GSS</h2>
+<p>The GSS asks the same question, below is the distribution of responses from the 2010 survey:<br>
+</p>
+<div class="center">
+<table class="caption-top">
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">All 1000 get the drug</td>
+<td style="text-align: center;">99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">500 get the drug 500 don’t</td>
+<td style="text-align: center;">571</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: center;">670</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Parameter and point estimate</h2>
+<div class="dq">
+<p>We would like to estimate the proportion of all Americans who have good intuition about experimental design, i.e.&nbsp;would answer “500 get the drug 500 don’t”? What are the parameter of interest and the point estimate?</p>
+</div>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li><span class="hl">Parameter of interest:</span> Proportion of <span class="orange">all</span> Americans who have good intuition about experimental design. <span class="math display">\[\color{#0DA6FF}{{p}}~{(\text{a population proportion})}\]</span></li>
+<li><span class="fragment li-frag" data-fragment-index="3"><span class="hl">Point estimate:</span> Proportion of <span class="orange">sampled</span> Americans who have good intuition about experimental design. <span class="math display">\[\color{#0DA6FF}{{\hat{p}}}~{(\text{a sample proportion})}\]</span></span></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+<h2>Inference on a proportion</h2>
+<div class="dq">
+<p>What percent of all Americans have good intuition about experimental design, i.e.&nbsp;would answer “500 get the drug 500 don’t”?</p>
+</div>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li><p>We can answer this research question using a confidence interval, which we know is always of the form</p>
+<p><span class="math display">\[\color{#FF8000}{point~estimate \pm ME}\]</span></p></li>
+<li><p><span class="fragment li-frag" data-fragment-index="3">And we also know that <span style="color: #FF8000"><span class="math inline">\(ME = critical~value \times standard~error\)</span></span> of the point estimate.</span></p></li>
+</ul>
+</div>
+<div class="fragment" data-fragment-index="4">
+<div class="formula">
+<p>Standard error of a sample proportion</p>
+</div>
+<p><span class="math display">\[SE_{\hat{p}} =  \sqrt{\frac{p~(1-p)}{n}}\]</span></p>
+</div>
+<!-- subsection: Identifying when a sample proportion is nearly normal -->
+</section>
+<section class="slide level2">
+<h2>Sample proportions are also nearly normally distributed</h2>
+<div class="formula">
+<p>Central limit theorem for proportions</p>
+</div>
+<p>Sample proportions will be nearly normally distributed with mean equal to the population mean, <span class="math inline">\(p\)</span>, and standard error equal to <span class="math inline">\(\sqrt{\frac{p~(1-p)}{n}}\)</span>. <span class="math display">\[\hat{p} \sim N \left(  mean = p, SE = \sqrt{\frac{p~(1-p)}{n}}  \right)\]</span></p>
+<p>But of course this is true only under certain conditions…</p>
+<div class="dq">
+<p>Any guesses?</p>
+</div>
+<p><span class="soln"><span class="fragment" data-fragment-index="2">Independent observations, at least 10 successes and 10 failures</span></span></p>
+<div class="fragment" data-fragment-index="3">
+<div class="note">
+<p>If <span class="math inline">\(p\)</span> is unknown (most cases), we use <span class="math inline">\(\hat{p}\)</span> in the calculation of the standard error.</p>
+</div>
+</div>
+<!-- subsection: Confidence intervals for a proportion -->
+</section>
+<section class="slide level2 scrollable">
+<h2>Back to experimental design…</h2>
+<div class="dq">
+<p>The GSS found that 571 out of 670 (85%) of Americans answered the question on experimental design correctly. Estimate (using a 95% confidence interval) the proportion of all Americans who have good intuition about experimental design?</p>
+</div>
+<p><span class="fragment" data-fragment-index="2">Given: <span class="math inline">\(n = 670, \hat{p} = 0.85\)</span>. First check conditions.</span></p>
+<div class="fragment" data-fragment-index="3">
+<ol type="1">
+<li><span class="hl">Independence</span>: The sample is random, and 670 <span class="math inline">\(&lt;\)</span> 10% of all Americans, therefore we can assume that one respondent’s response is independent of another.</li>
+<li><span class="fragment li-frag" data-fragment-index="4"><span class="hl">Success-failure</span>: 571 people answered correctly (successes) and 99 answered incorrectly (failures), both are greater than 10.</span></li>
+</ol>
+</div>
+</section>
+<section class="slide level2 scrollable">
+<h2></h2>
+<div class="pq">
+<p>We are given that <span class="math inline">\(n = 670, \hat{p} = 0.85\)</span>, we also just learned that the standard error of the sample proportion is <span class="math inline">\(SE = \sqrt{\frac{p(1-p)}{n}}\)</span>. Which of the below is the correct calculation of the 95% confidence interval?</p>
+</div>
+<ol type="a">
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2"><span class="math inline">\(0.85 \pm 1.96 \times \sqrt{\frac{0.85 \times 0.15}{670}}\)</span></span> <span class="soln"><span class="fragment only" data-fragment-index="2"><span class="orange"><span class="math inline">\(\rightarrow (0.82, 0.88)\)</span></span></span></span></li>
+<li><span class="math inline">\(0.85 \pm 1.65 \times \sqrt{\frac{0.85 \times 0.15}{670}}\)</span></li>
+<li><span class="math inline">\(0.85 \pm 1.96 \times \frac{0.85 \times 0.15}{\sqrt{670}}\)</span></li>
+<li><span class="math inline">\(571 \pm 1.96 \times \sqrt{\frac{571 \times 99}{670}}\)</span></li>
+</ol>
+<div class="participate">
+<p>[Participate ⟹ <a href="https://strawpoll.live">strawpoll.live</a> and use the code 833295]</p>
+</div>
+<!-- subsection: Choosing a sample size when estimating a proportion -->
+</section>
+<section class="slide level2">
+<h2>Choosing a sample size</h2>
+<div class="dq">
+<p>How many people should you sample in order to cut the margin of error of a 95% confidence interval down to 1%.</p>
+</div>
+<p><span class="fragment" data-fragment-index="2"><span class="math display">\[ME = z^\star \times SE\]</span></span><span class="fragment" data-fragment-index="3"></span></p>
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+0.01 &amp;\ge&amp; 1.96 \times \sqrt{\frac{0.85 \times 0.15}{n}} \color{#FF8000}{\text{$\rightarrow$ Use $\hat{p}$ from previous study}} \\
+\phantom{0.01^2 }&amp;\phantom{\ge}&amp;\phantom{ 1.96^2 \times \frac{0.85 \times 0.15}{n}} \\
+\phantom{n }&amp;\phantom{\ge}&amp;\phantom{ \frac{1.96^2 \times 0.85 \times 0.15}{0.01^2}} \\
+\phantom{n }&amp;\phantom{\ge}&amp;\phantom{ 4898.04  \color{#FF8000}{\text{~$\rightarrow$ n  should be at least 4,899}}}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+0.01 &amp;\ge&amp; 1.96 \times \sqrt{\frac{0.85 \times 0.15}{n}} \color{#FF8000}{\text{$\rightarrow$ Use $\hat{p}$ from previous study}} \\
+0.01^2 &amp;\ge&amp; 1.96^2 \times \frac{0.85 \times 0.15}{n} \\
+\phantom{n }&amp;\phantom{\ge}&amp;\phantom{ \frac{1.96^2 \times 0.85 \times 0.15}{0.01^2}} \\
+\phantom{n }&amp;\phantom{\ge}&amp;\phantom{ 4898.04  \color{#FF8000}{\text{~$\rightarrow$ n  should be at least 4,899}}}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="5">
+<p><span class="math display">\[\begin{eqnarray*}
+0.01 &amp;\ge&amp; 1.96 \times \sqrt{\frac{0.85 \times 0.15}{n}} \color{#FF8000}{\text{$\rightarrow$ Use $\hat{p}$ from previous study}} \\
+0.01^2 &amp;\ge&amp; 1.96^2 \times \frac{0.85 \times 0.15}{n} \\
+n &amp;\ge&amp; \frac{1.96^2 \times 0.85 \times 0.15}{0.01^2} \\
+\phantom{n }&amp;\phantom{\ge}&amp;\phantom{ 4898.04  \color{#FF8000}{\text{~$\rightarrow$ n  should be at least 4,899}}}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="6">
+<p><span class="math display">\[\begin{eqnarray*}
+0.01 &amp;\ge&amp; 1.96 \times \sqrt{\frac{0.85 \times 0.15}{n}} \color{#FF8000}{\text{$\rightarrow$ Use $\hat{p}$ from previous study}} \\
+0.01^2 &amp;\ge&amp; 1.96^2 \times \frac{0.85 \times 0.15}{n} \\
+n &amp;\ge&amp; \frac{1.96^2 \times 0.85 \times 0.15}{0.01^2} \\
+\phantom{n }&amp;\phantom{\ge}&amp;\phantom{ 4898.04  \color{#FF8000}{\text{~$\rightarrow$ n  should be at least 4,899}}}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="7">
+<p><span class="math display">\[\begin{eqnarray*}
+0.01 &amp;\ge&amp; 1.96 \times \sqrt{\frac{0.85 \times 0.15}{n}} \color{#FF8000}{\text{$\rightarrow$ Use $\hat{p}$ from previous study}} \\
+0.01^2 &amp;\ge&amp; 1.96^2 \times \frac{0.85 \times 0.15}{n} \\
+n &amp;\ge&amp; \frac{1.96^2 \times 0.85 \times 0.15}{0.01^2} \\
+n &amp;\ge&amp; 4898.04  \color{#FF8000}{\text{~$\rightarrow$ n  should be at least 4,899}}
+\end{eqnarray*}\]</span></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+<h2>What if there isn’t a previous study?</h2>
+<p>… use <span class="math inline">\(\hat{p} = 0.5\)</span></p>
+<div class="dq">
+<p>why?</p>
+</div>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li>if you don’t know any better, 50-50 is a good guess</li>
+<li><span class="fragment li-frag" data-fragment-index="3"><span class="math inline">\(\hat{p} = 0.5\)</span> gives the most conservative estimate – highest possible sample size</span></li>
+</ul>
+</div>
+<!-- subsection: Hypothesis testing for a proportion -->
+</section>
+<section class="slide level2">
+<h2>CI vs.&nbsp;HT for proportions</h2>
+<ul>
+<li><p>Success-failure condition:</p>
+<ul>
+<li>CI: At least 10 <span class="orange">observed</span> successes and failures</li>
+<li>HT: At least 10 <span class="orange">expected</span> successes and failures, calculated using the null value</li>
+</ul></li>
+<li><p>Standard error:</p>
+<ul>
+<li>CI: calculate using observed sample proportion: <span class="math inline">\(SE = \sqrt{\frac{p(1-p)}{n}}\)</span></li>
+<li>HT: calculate using the null value: <span class="math inline">\(SE = \sqrt{\frac{p_0(1-p_0)}{n}}\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2></h2>
+<div class="dq">
+<p>The GSS found that 571 out of 670 (85%) of Americans answered the question on experimental design correctly. Do these data provide convincing evidence that more than 80% of Americans have a good intuition about experimental design?</p>
+</div>
+<p><span class="fragment" data-fragment-index="2"><span class="math display">\[H_0: p = 0.80 \qquad H_A: p &gt; 0.80\]</span></span></p>
+<div class="fragment" data-fragment-index="2">
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><span class="fragment" data-fragment-index="3"></span></p>
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+SE &amp;=&amp; \sqrt{\frac{0.80 \times 0.20}{670}} = 0.0154 \\
+\phantom{Z }&amp;\phantom{=}&amp;\phantom{ \frac{0.85 - 0.80}{0.0154} = 3.25} \\
+\phantom{p-value }&amp;\phantom{=}&amp;\phantom{ 1 - 0.9994 = 0.0006} \\
+
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+SE &amp;=&amp; \sqrt{\frac{0.80 \times 0.20}{670}} = 0.0154 \\
+Z &amp;=&amp; \frac{0.85 - 0.80}{0.0154} = 3.25 \\
+\phantom{p-value }&amp;\phantom{=}&amp;\phantom{ 1 - 0.9994 = 0.0006} \\
+
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="5">
+<p><span class="math display">\[\begin{eqnarray*}
+SE &amp;=&amp; \sqrt{\frac{0.80 \times 0.20}{670}} = 0.0154 \\
+Z &amp;=&amp; \frac{0.85 - 0.80}{0.0154} = 3.25 \\
+p-value &amp;=&amp; 1 - 0.9994 = 0.0006 \\
+
+\end{eqnarray*}\]</span></p>
+</div>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="fragment" data-fragment-index="5">
+<div class="center">
+<p><img data-src="material/expdesgn_norm.svg" style="width:100.0%"></p>
+</div>
+</div>
+</div></div>
+</div>
+<div class="fragment" data-fragment-index="5">
+<p><span class="fragment" data-fragment-index="6">Since the p-value is low, we reject <span class="math inline">\(H_0\)</span>. The data provide convincing evidence that more than 80% of Americans have a good intuition on experimental design.</span></p>
+</div>
+<!-- subsection: Recap -->
+</section>
+<section class="slide level2 scrollable">
+<h2></h2>
+<div class="pq">
+<p>11% of 1,001 Americans responding to a 2006 Gallup survey stated that they have objections to celebrating Halloween on religious grounds. At 95% confidence level, the margin of error for this survey is <span class="math inline">\(\pm 3\%\)</span>. A news piece on this study’s findings states: “More than 10% of all Americans have objections on religious grounds to celebrating Halloween.” At 95% confidence level, is this news piece’s statement justified?</p>
+</div>
+<ol type="a">
+<li>Yes</li>
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2">No</span></li>
+<li>Cannot tell</li>
+</ol>
+</section>
+<section class="slide level2">
+<h2>Recap - inference for one proportion</h2>
+<ul>
+<li><p>Population parameter: <span class="math inline">\(p\)</span>, point estimate: <span class="math inline">\(\hat{p}\)</span></p></li>
+<li><div class="fragment li-frag" data-fragment-index="2">
+<p>Conditions:</p>
+<ul>
+<li>independence<br>
+
+<ul>
+<li>random sample and 10% condition</li>
+</ul></li>
+<li>at least 10 successes and failures<br>
+
+<ul>
+<li>if not <span class="math inline">\(\rightarrow\)</span> randomization</li>
+</ul></li>
+</ul>
+</div></li>
+<li><div class="fragment li-frag" data-fragment-index="3">
+<p>Standard error: <span class="math inline">\(SE = \sqrt{ \frac{p(1-p)}{n} }\)</span></p>
+<ul>
+<li>for CI: use <span class="math inline">\(\hat{p}\)</span></li>
+<li>for HT: use <span class="math inline">\(p_0\)</span></li>
+</ul>
+</div></li>
+</ul>
+</section></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Difference of two proportions</h1>
+<!-- source: material/6-2_two_props -->
+</section>
+<section class="slide level2 scrollable">
+<h2>Melting ice cap</h2>
+<div class="pq">
+<p>Scientists predict that global warming may have big effects on the polar regions within the next 100 years. One of the possible effects is that the northern ice cap may completely melt. Would this bother you a great deal, some, a little, or not at all if it actually happened?</p>
+</div>
+<ol type="a">
+<li>A great deal</li>
+<li>Some</li>
+<li>A little</li>
+<li>Not at all</li>
+</ol>
+</section>
+<section class="slide level2">
+<h2>Results from the GSS</h2>
+<p>The GSS asks the same question, below are the distributions of responses from the 2010 GSS as well as from a group of introductory statistics students at Duke University:<br>
+</p>
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">GSS</th>
+<th style="text-align: right;">Duke</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A great deal</td>
+<td style="text-align: right;">454</td>
+<td style="text-align: right;">69</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Some</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A little</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Not at all</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">680</td>
+<td style="text-align: right;">105</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Parameter and point estimate</h2>
+<ul>
+<li><span class="hl">Parameter of interest:</span> Difference between the proportions of <span class="orange">all</span> Duke students and <span class="orange">all</span> Americans who would be bothered a great deal by the northern ice cap completely melting. <span class="math display">\[\color{#0DA6FF}{{ p_{Duke} - p_{US} }}\]</span></li>
+<li><span class="fragment li-frag" data-fragment-index="2"><span class="hl">Point estimate:</span> Difference between the proportions of <span class="orange">sampled</span> Duke students and <span class="orange">sampled</span> Americans who would be bothered a great deal by the northern ice cap completely melting. <span class="math display">\[\color{#0DA6FF}{{ \hat{p}_{Duke} - \hat{p}_{US} }}\]</span></span></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Inference for comparing proportions</h2>
+<ul>
+<li>The details are the same as before…</li>
+<li><span class="fragment li-frag" data-fragment-index="2">CI: <span style="color: #FF8000"><span class="math inline">\(point~estimate \pm margin~of~error\)</span></span></span></li>
+<li><span class="fragment li-frag" data-fragment-index="3">HT: Use <span style="color: #FF8000"><span class="math inline">\(Z = \frac{point~estimate - null~value}{SE}\)</span></span> to find appropriate p-value.</span></li>
+<li><span class="fragment li-frag" data-fragment-index="4">We just need the appropriate standard error of the point estimate (<span class="math inline">\(SE_{ \hat{p}_{Duke} - \hat{p}_{US}}\)</span>), which is the only new concept.</span></li>
+</ul>
+<div class="fragment" data-fragment-index="5">
+<div class="formula">
+<p>Standard error of the difference between two sample proportions</p>
+</div>
+<p><span class="math display">\[SE_{(\hat{p}_1 - \hat{p}_2)} = \sqrt{ \frac{p_1(1-p_1)}{n_1} + \frac{p_2(1-p_2)}{n_2} }\]</span></p>
+</div>
+<!-- subsection: Confidence intervals for difference of proportions -->
+</section>
+<section class="slide level2 scrollable">
+<h2>Conditions for CI for difference of proportions</h2>
+<ol type="1">
+<li><p><span class="hl">Independence within groups:</span></p>
+<ul>
+<li>The US group is sampled randomly and we’re assuming that the Duke group represents a random sample as well.</li>
+<li><span class="fragment li-frag" data-fragment-index="2"><span class="math inline">\(n_{Duke}\)</span> <span class="math inline">\(&lt;\)</span> 10% of all Duke students and 680 <span class="math inline">\(&lt;\)</span> 10% of all Americans.</span></li>
+</ul>
+<div class="fragment" data-fragment-index="2">
+<p><span class="fragment" data-fragment-index="3">We can assume that the attitudes of Duke students in the sample are independent of each other, and attitudes of US residents in the sample are independent of each other as well.</span></p>
+</div></li>
+<li><p><span class="fragment li-frag" data-fragment-index="4"><span class="hl">Independence between groups:</span> The sampled Duke students and the US residents are independent of each other.</span></p></li>
+<li><p><span class="fragment li-frag" data-fragment-index="5"><span class="hl">Success-failure:</span><br>
+At least 10 observed successes and 10 observed failures in the two groups.</span></p></li>
+</ol>
+</section>
+<section class="slide level2">
+<h2></h2>
+<div class="dq">
+<p>Construct a 95% confidence interval for the difference between the proportions of Duke students and Americans who would be bothered a great deal by the melting of the northern ice cap <span class="orange">(<span class="math inline">\(p_{Duke} - p_{US}\)</span>)</span>.</p>
+</div>
+<div class="footnotesize">
+<div class="center">
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Data</th>
+<th style="text-align: center;">Duke</th>
+<th style="text-align: center;">US</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A great deal</td>
+<td style="text-align: center;">69</td>
+<td style="text-align: center;">454</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Not a great deal</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">226</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: center;">105</td>
+<td style="text-align: center;">680</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="fragment" data-fragment-index="2"><span class="math inline">\(\hat{p}\)</span></span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="2">0.657</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="2">0.668</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="fragment" data-fragment-index="3">
+<div class="soln">
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;\phantom{=}&amp;\phantom{ (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} }} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm  1.96 \times 0.0497} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm 0.097} \\
+&amp;\phantom{=}&amp;\phantom{ (-0.108, 0.086)}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;\phantom{=}&amp;\phantom{ (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} }} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm  1.96 \times 0.0497} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm 0.097} \\
+&amp;\phantom{=}&amp;\phantom{ (-0.108, 0.086)}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="5">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;\phantom{=}&amp;\phantom{ (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} }} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm  1.96 \times 0.0497} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm 0.097} \\
+&amp;\phantom{=}&amp;\phantom{ (-0.108, 0.086)}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="6">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;=&amp; (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} } \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm  1.96 \times 0.0497} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm 0.097} \\
+&amp;\phantom{=}&amp;\phantom{ (-0.108, 0.086)}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="7">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;=&amp; (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} } \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm  1.96 \times 0.0497} \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm 0.097} \\
+&amp;\phantom{=}&amp;\phantom{ (-0.108, 0.086)}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="8">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;=&amp; (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} } \\
+&amp;=&amp; -0.011 \pm  1.96 \times 0.0497 \\
+&amp;\phantom{=}&amp;\phantom{ -0.011 \pm 0.097} \\
+&amp;\phantom{=}&amp;\phantom{ (-0.108, 0.086)}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="9">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;=&amp; (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} } \\
+&amp;=&amp; -0.011 \pm  1.96 \times 0.0497 \\
+&amp;=&amp; -0.011 \pm 0.097 \\
+&amp;\phantom{=}&amp;\phantom{ (-0.108, 0.086)}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="10">
+<p><span class="math display">\[\begin{eqnarray*}
+&amp;&amp; (\hat{p}_{Duke} - \hat{p}_{US}) \pm z^\star \times \sqrt{ \frac{ \hat{p}_{Duke} (1 - \hat{p}_{Duke})}{n_{Duke} } + \frac{ \hat{p}_{US} (1 -  \hat{p}_{US})}{n_{US} } } \\
+&amp;=&amp; (0.657 - 0.668)  \pm 1.96  \times \sqrt{ \frac{0.657 \times 0.343}{105} + \frac{0.668 \times 0.332}{680} } \\
+&amp;=&amp; -0.011 \pm  1.96 \times 0.0497 \\
+&amp;=&amp; -0.011 \pm 0.097 \\
+&amp;=&amp; (-0.108, 0.086)
+\end{eqnarray*}\]</span></p>
+</div>
+</div>
+</div>
+</div>
+<!-- subsection: HT for comparing proportions -->
+</section>
+<section class="slide level2 scrollable">
+<h2></h2>
+<div class="pq">
+<p>Which of the following is the correct set of hypotheses for testing if the proportion of all Duke students who would be bothered a great deal by the melting of the northern ice cap differs from the proportion of all Americans who do?</p>
+</div>
+<ol type="a">
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2"><span class="math inline">\(H_0:  p_{Duke} = p_{US}\)</span><br>
+<span class="math inline">\(H_A:  p_{Duke} \ne p_{US}\)</span></span></li>
+<li><span class="math inline">\(H_0:  \hat{p}_{Duke} = \hat{p}_{US}\)</span><br>
+<span class="math inline">\(H_A:  \hat{p}_{Duke} \ne \hat{p}_{US}\)</span></li>
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2"><span class="math inline">\(H_0:  p_{Duke} - p_{US} = 0\)</span><br>
+<span class="math inline">\(H_A:  p_{Duke} - p_{US} \ne 0\)</span></span></li>
+<li><span class="math inline">\(H_0:  p_{Duke} = p_{US}\)</span><br>
+<span class="math inline">\(H_A:  p_{Duke} &lt; p_{US}\)</span></li>
+</ol>
+<p><span class="soln"><span class="fragment only" data-fragment-index="2"><span class="orange">Both (a) and (c) are correct.</span></span></span></p>
+<div class="participate">
+<p>[Participate ⟹ <a href="https://strawpoll.live">strawpoll.live</a> and use the code 833295]</p>
+</div>
+</section>
+<section class="slide level2">
+<h2>Flashback to working with one proportion</h2>
+<ul>
+<li>When constructing a confidence interval for a population proportion, we check if the <span class="orange">observed</span> number of successes and failures are at least 10. <span class="math display">\[n\hat{p} \ge 10 \qquad \qquad n(1-\hat{p}) \ge 10\]</span></li>
+<li><span class="fragment li-frag" data-fragment-index="2">When conducting a hypothesis test for a population proportion, we check if the <span class="orange">expected</span> number of successes and failures are at least 10. <span class="math display">\[np_0 \ge 10 \qquad \qquad n(1-p_0) \ge 10\]</span></span></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Pooled estimate of a proportion</h2>
+<ul>
+<li>In the case of comparing two proportions where <span class="math inline">\(H_0: p_1 = p_2\)</span>, there isn’t a given null value we can use to calculated the <span class="orange">expected</span> number of successes and failures in each sample.</li>
+<li><span class="fragment li-frag" data-fragment-index="2">Therefore, we need to first find a common (<span class="hl">pooled</span>) proportion for the two groups, and use that in our analysis.</span></li>
+<li><span class="fragment li-frag" data-fragment-index="3">This simply means finding the proportion of total successes among the total number of observations.</span></li>
+</ul>
+<div class="fragment" data-fragment-index="3">
+<div class="formula">
+<p>Pooled estimate of a proportion</p>
+</div>
+<p><span class="math display">\[\hat{p} = \frac{\#~of~successes_1 + \#~of~successes_2}{n_1 + n_2}\]</span></p>
+</div>
+</section>
+<section class="slide level2">
+<h2></h2>
+<div class="dq">
+<p>Calculate the estimated <u>pooled proportion</u> of Duke students and Americans who would be bothered a great deal by the melting of the northern ice cap. Which sample proportion (<span class="math inline">\(\hat{p}_{Duke}\)</span> or <span class="math inline">\(\hat{p}_{US}\)</span>) the pooled estimate is closer to? Why?</p>
+</div>
+<div class="footnotesize">
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Data</th>
+<th style="text-align: center;">Duke</th>
+<th style="text-align: center;">US</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A great deal</td>
+<td style="text-align: center;">69</td>
+<td style="text-align: center;">454</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Not a great deal</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">226</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: center;">105</td>
+<td style="text-align: center;">680</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\hat{p}\)</span></td>
+<td style="text-align: center;">0.657</td>
+<td style="text-align: center;">0.668</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="fragment" data-fragment-index="2">
+<div class="soln">
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+\hat{p} &amp;=&amp; \frac{\#~of~successes_1 + \#~of~successes_2}{n_1 + n_2} \\
+&amp;\phantom{=}&amp;\phantom{ \frac{69+454}{105+680}  = \frac{523}{785}  = 0.666}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+\hat{p} &amp;=&amp; \frac{\#~of~successes_1 + \#~of~successes_2}{n_1 + n_2} \\
+&amp;\phantom{=}&amp;\phantom{ \frac{69+454}{105+680}  = \frac{523}{785}  = 0.666}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+\hat{p} &amp;=&amp; \frac{\#~of~successes_1 + \#~of~successes_2}{n_1 + n_2} \\
+&amp;\phantom{=}&amp;\phantom{ \frac{69+454}{105+680}  = \frac{523}{785}  = 0.666}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="5">
+<p><span class="math display">\[\begin{eqnarray*}
+\hat{p} &amp;=&amp; \frac{\#~of~successes_1 + \#~of~successes_2}{n_1 + n_2} \\
+&amp;=&amp; \frac{69+454}{105+680}  = \frac{523}{785}  = 0.666
+\end{eqnarray*}\]</span></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+<h2></h2>
+<div class="dq">
+<p>Do these data suggest that the proportion of all Duke students who would be bothered a great deal by the melting of the northern ice cap differs from the proportion of all Americans who do? Calculate the test statistic, the p-value, and interpret your conclusion in context of the data.</p>
+</div>
+<div class="footnotesize">
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Data</th>
+<th style="text-align: center;">Duke</th>
+<th style="text-align: center;">US</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A great deal</td>
+<td style="text-align: center;">69</td>
+<td style="text-align: center;">454</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Not a great deal</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">226</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: center;">105</td>
+<td style="text-align: center;">680</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\hat{p}\)</span></td>
+<td style="text-align: center;">0.657</td>
+<td style="text-align: center;">0.668</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="fragment" data-fragment-index="2">
+<div class="soln">
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+Z &amp;=&amp; \frac{(\hat{p}_{Duke} - \hat{p}_{US})}{\sqrt{ \frac{ \hat{p} (1 - \hat{p})}{n_{Duke} } + \frac{ \hat{p} (1 -  \hat{p})}{n_{US} } }} \\
+&amp;\phantom{=}&amp;\phantom{ \frac{(0.657 - 0.668)}{\sqrt{ \frac{0.666 \times 0.334}{105} + \frac{0.666 \times 0.334}{680} }} =  \frac{-0.011}{0.0495}  = -0.22} \\
+\phantom{p-value }&amp;\phantom{=}&amp;\phantom{ 2 \times P(Z &lt; -0.22)  = 2 \times 0.41 = 0.82}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+Z &amp;=&amp; \frac{(\hat{p}_{Duke} - \hat{p}_{US})}{\sqrt{ \frac{ \hat{p} (1 - \hat{p})}{n_{Duke} } + \frac{ \hat{p} (1 -  \hat{p})}{n_{US} } }} \\
+&amp;\phantom{=}&amp;\phantom{ \frac{(0.657 - 0.668)}{\sqrt{ \frac{0.666 \times 0.334}{105} + \frac{0.666 \times 0.334}{680} }} =  \frac{-0.011}{0.0495}  = -0.22} \\
+\phantom{p-value }&amp;\phantom{=}&amp;\phantom{ 2 \times P(Z &lt; -0.22)  = 2 \times 0.41 = 0.82}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+Z &amp;=&amp; \frac{(\hat{p}_{Duke} - \hat{p}_{US})}{\sqrt{ \frac{ \hat{p} (1 - \hat{p})}{n_{Duke} } + \frac{ \hat{p} (1 -  \hat{p})}{n_{US} } }} \\
+&amp;\phantom{=}&amp;\phantom{ \frac{(0.657 - 0.668)}{\sqrt{ \frac{0.666 \times 0.334}{105} + \frac{0.666 \times 0.334}{680} }} =  \frac{-0.011}{0.0495}  = -0.22} \\
+\phantom{p-value }&amp;\phantom{=}&amp;\phantom{ 2 \times P(Z &lt; -0.22)  = 2 \times 0.41 = 0.82}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="5">
+<p><span class="math display">\[\begin{eqnarray*}
+Z &amp;=&amp; \frac{(\hat{p}_{Duke} - \hat{p}_{US})}{\sqrt{ \frac{ \hat{p} (1 - \hat{p})}{n_{Duke} } + \frac{ \hat{p} (1 -  \hat{p})}{n_{US} } }} \\
+&amp;=&amp; \frac{(0.657 - 0.668)}{\sqrt{ \frac{0.666 \times 0.334}{105} + \frac{0.666 \times 0.334}{680} }} =  \frac{-0.011}{0.0495}  = -0.22 \\
+\phantom{p-value }&amp;\phantom{=}&amp;\phantom{ 2 \times P(Z &lt; -0.22)  = 2 \times 0.41 = 0.82}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="6">
+<p><span class="math display">\[\begin{eqnarray*}
+Z &amp;=&amp; \frac{(\hat{p}_{Duke} - \hat{p}_{US})}{\sqrt{ \frac{ \hat{p} (1 - \hat{p})}{n_{Duke} } + \frac{ \hat{p} (1 -  \hat{p})}{n_{US} } }} \\
+&amp;=&amp; \frac{(0.657 - 0.668)}{\sqrt{ \frac{0.666 \times 0.334}{105} + \frac{0.666 \times 0.334}{680} }} =  \frac{-0.011}{0.0495}  = -0.22 \\
+\phantom{p-value }&amp;\phantom{=}&amp;\phantom{ 2 \times P(Z &lt; -0.22)  = 2 \times 0.41 = 0.82}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="7">
+<p><span class="math display">\[\begin{eqnarray*}
+Z &amp;=&amp; \frac{(\hat{p}_{Duke} - \hat{p}_{US})}{\sqrt{ \frac{ \hat{p} (1 - \hat{p})}{n_{Duke} } + \frac{ \hat{p} (1 -  \hat{p})}{n_{US} } }} \\
+&amp;=&amp; \frac{(0.657 - 0.668)}{\sqrt{ \frac{0.666 \times 0.334}{105} + \frac{0.666 \times 0.334}{680} }} =  \frac{-0.011}{0.0495}  = -0.22 \\
+p-value &amp;=&amp; 2 \times P(Z &lt; -0.22)  = 2 \times 0.41 = 0.82
+\end{eqnarray*}\]</span></p>
+</div>
+</div>
+</div>
+</div>
+<!-- subsection: Recap -->
+</section>
+<section class="slide level2">
+<h2>Recap - comparing two proportions</h2>
+<ul>
+<li><p>Population parameter: <span class="math inline">\((p_1 - p_2)\)</span>, point estimate: <span class="math inline">\((\hat{p}_1 - \hat{p}_2)\)</span></p></li>
+<li><div class="fragment li-frag" data-fragment-index="2">
+<p>Conditions:</p>
+<div class="fragment" data-fragment-index="3">
+<ul>
+<li>independence within groups<br>
+
+<ul>
+<li>random sample and 10% condition met for both groups</li>
+</ul></li>
+<li>independence between groups</li>
+<li>at least 10 successes and failures in each group<br>
+
+<ul>
+<li>if not <span class="math inline">\(\rightarrow\)</span> randomization (Section 6.4)</li>
+</ul></li>
+</ul>
+</div>
+</div></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Recap - comparing two proportions</h2>
+<ul>
+<li><p>Population parameter: <span class="math inline">\((p_1 - p_2)\)</span>, point estimate: <span class="math inline">\((\hat{p}_1 - \hat{p}_2)\)</span></p></li>
+<li><div class="fragment li-frag" data-fragment-index="4">
+<p><span class="math inline">\(SE_{(\hat{p}_1 - \hat{p}_2)} = \sqrt{ \frac{p_1(1-p_1)}{n_1} + \frac{p_2(1-p_2)}{n_2} }\)</span></p>
+<ul>
+<li><p>for CI: use <span class="math inline">\(\hat{p}_1\)</span> and <span class="math inline">\(\hat{p}_2\)</span></p></li>
+<li><p>for HT:</p>
+<ul>
+<li>when <span class="math inline">\(H_0: p_1 = p_2\)</span>: use <span class="math inline">\(\hat{p}_{pool} = \frac{\#~suc_1 + \#suc_2}{n_1 + n_2}\)</span></li>
+<li>when <span class="math inline">\(H_0: p_1 - p_2 =\)</span> <em>(some value other than 0)</em>: use <span class="math inline">\(\hat{p}_1\)</span> and <span class="math inline">\(\hat{p}_2\)</span><br>
+
+<ul>
+<li>this is pretty rare</li>
+</ul></li>
+</ul></li>
+</ul>
+</div></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Reference - standard error calculations</h2>
+<div class="center">
+<table class="caption-top">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 42%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">one sample</th>
+<th style="text-align: left;">two samples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;"><span class="math inline">\(SE = \frac{s}{\sqrt{n}}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(SE = \sqrt{ \frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">proportion</td>
+<td style="text-align: left;"><span class="math inline">\(SE = \sqrt{ \frac{p(1-p)}{n} }\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(SE = \sqrt{ \frac{p_1(1-p_1)}{n_1} + \frac{p_2(1-p_2)}{n_2} }\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li><p>When working with means, it’s very rare that <span class="math inline">\(\sigma\)</span> is known, so we usually use <span class="math inline">\(s\)</span>.</p></li>
+<li><div class="fragment li-frag" data-fragment-index="3">
+<p>When working with proportions,</p>
+<ul>
+<li>if doing a hypothesis test, <span class="math inline">\(p\)</span> comes from the null hypothesis</li>
+<li>if constructing a confidence interval, use <span class="math inline">\(\hat{p}\)</span> instead</li>
+</ul>
+</div></li>
+</ul>
+</div>
+</section></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Chi-square test of GOF</h1>
+<!-- source: material/6-3_chisq_gof -->
+<!-- subsection: Weldon’s dice -->
+</section>
+<section class="slide level2">
+<h2>Weldon’s dice</h2>
+<div class="columns">
+<div class="column" style="width:75%;">
+<ul>
+<li>Walter Frank Raphael Weldon (1860 - 1906), was an English evolutionary biologist and a founder of biometry. He was the joint founding editor of Biometrika, with Francis Galton and Karl Pearson.</li>
+<li>In 1894, he rolled 12 dice 26,306 times, and recorded the number of 5s or 6s (which he considered to be a success).</li>
+</ul>
+</div><div class="column" style="width:25%;">
+<div class="center">
+<p><img data-src="material/weldon.jpeg" style="width:100.0%"></p>
+</div>
+</div></div>
+<ul>
+<li>It was observed that 5s or 6s occurred more often than expected, and Pearson hypothesized that this was probably due to the construction of the dice. Most inexpensive dice have hollowed-out pips, and since opposite sides add to 7, the face with 6 pips is lighter than its opposing face, which has only 1 pip.</li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Labby’s dice</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li><p>In 2009, Zacariah Labby (U of Chicago), repeated Weldon’s experiment using a homemade dice-throwing, pip counting machine.</p>
+<div class="center">
+<p><a href="http://www.youtube.com/watch?v=95EErdouO2w" class="uri">http://www.youtube.com/watch?v=95EErdouO2w</a></p>
+</div></li>
+<li><p>The rolling-imaging process took about 20 seconds per roll.</p></li>
+</ul>
+</div><div class="column" style="width:40%;">
+<div class="center">
+<p><img data-src="material/labby.png" style="width:100.0%"></p>
+</div>
+</div></div>
+<ul>
+<li>Each day there were <span class="math inline">\(\sim\)</span><!-- -->150 images to process manually.</li>
+<li>At this rate Weldon’s experiment was repeated in a little more than six full days.</li>
+<li>Recommended reading: <a href="http://galton.uchicago.edu/about/docs/labby09dice.pdf" class="uri">http://galton.uchicago.edu/about/docs/labby09dice.pdf</a></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Labby’s dice (cont.)</h2>
+<ul>
+<li>Labby did not actually observe the same phenomenon that Weldon observed (higher frequency of 5s and 6s).</li>
+<li>Automation allowed Labby to collect more data than Weldon did in 1894, instead of recording “successes” and “failures”, Labby recorded the individual number of pips on each die.</li>
+</ul>
+<div class="center">
+<p><img data-src="material/labbyPipCounts.png" style="width:40.0%"></p>
+</div>
+<!-- subsection: Creating a test statistic for one-way tables -->
+</section>
+<section class="slide level2 scrollable">
+<h2>Expected counts</h2>
+<div class="pq">
+<p>Labby rolled 12 dice 26,306 times. If each side is equally likely to come up, how many 1s, 2s, <span class="math inline">\(\cdots\)</span>, 6s would he expect to have observed?</p>
+</div>
+<ol type="a">
+<li><span class="math inline">\(\frac{1}{6}\)</span></li>
+<li><span class="math inline">\(\frac{12}{6}\)</span></li>
+<li><span class="math inline">\(\frac{26,306}{6}\)</span></li>
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2"><span class="math inline">\(\frac{12 \times 26,306}{6}\)</span></span> <span class="soln"><span class="fragment only" data-fragment-index="2"><span class="orange"><span class="math inline">\(= 52,612\)</span></span></span></span></li>
+</ol>
+</section>
+<section class="slide level2">
+<h2>Summarizing Labby’s results</h2>
+<p>The table below shows the observed and expected counts from Labby’s experiment.</p>
+<div class="small">
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Outcome</th>
+<th style="text-align: center;">Observed</th>
+<th style="text-align: center;">Expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">53,222</td>
+<td style="text-align: center;">52,612</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">52,118</td>
+<td style="text-align: center;">52,612</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">52,465</td>
+<td style="text-align: center;">52,612</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">52,338</td>
+<td style="text-align: center;">52,612</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">52,244</td>
+<td style="text-align: center;">52,612</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">53,285</td>
+<td style="text-align: center;">52,612</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Total</td>
+<td style="text-align: center;">315,672</td>
+<td style="text-align: center;">315,672</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="fragment" data-fragment-index="2">
+<div class="dq">
+<p>Why are the expected counts the same for all outcomes but the observed counts are different? At a first glance, does there appear to be an inconsistency between the observed and expected counts?</p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+<h2>Setting the hypotheses</h2>
+<div class="dq">
+<p>Do these data provide convincing evidence of an inconsistency between the observed and expected counts?</p>
+</div>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li>There is no inconsistency between the observed and the expected counts. <span class="hlGr">The observed counts follow the same distribution as the expected counts.</span></li>
+<li><span class="fragment li-frag" data-fragment-index="3">There is an inconsistency between the observed and the expected counts. <span class="hlGr">The observed counts <span class="orange">do not</span> follow the same distribution as the expected counts.</span> There is a bias in which side comes up on the roll of a die.</span></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+<h2>Evaluating the hypotheses</h2>
+<ul>
+<li>To evaluate these hypotheses, we quantify how different the observed counts are from the expected counts.</li>
+<li><span class="fragment li-frag" data-fragment-index="2">Large deviations from what would be expected based on sampling variation (chance) alone provide strong evidence for the alternative hypothesis.</span></li>
+<li><span class="fragment li-frag" data-fragment-index="3">This is called a <span class="hl">goodness of fit</span> test since we’re evaluating how well the observed data fit the expected distribution.</span></li>
+</ul>
+<!-- subsection: The chi-square test statistic -->
+</section>
+<section class="slide level2 scrollable">
+<h2>Anatomy of a test statistic</h2>
+<ul>
+<li><p>The general form of a test statistic is <span class="math display">\[\frac{\text{point estimate} - \text{null value}}{\text{SE of point estimate}}\]</span></p></li>
+<li><div class="fragment li-frag" data-fragment-index="2">
+<p>This construction is based on</p>
+<ol type="1">
+<li>identifying the difference between a point estimate and an expected value if the null hypothesis was true, and</li>
+<li>standardizing that difference using the standard error of the point estimate.</li>
+</ol>
+<p><span class="fragment" data-fragment-index="3">These two ideas will help in the construction of an appropriate test statistic for count data.</span></p>
+</div></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Chi-square statistic</h2>
+<p>When dealing with counts and investigating how far the observed counts are from the expected counts, we use a new test statistic called the <span class="hl">chi-square (<span class="math inline">\(\chi^2\)</span>) statistic</span>.</p>
+<div class="fragment" data-fragment-index="2">
+<div class="formula">
+<p><span class="math inline">\(\chi^2\)</span> statistic</p>
+</div>
+<p><span class="math display">\[\chi^2 = \sum_{i = 1}^k \frac{(O - E)^2}{E} \qquad \text{where $k$ = total number of cells}\]</span></p>
+</div>
+</section>
+<section class="slide level2">
+<h2>Calculating the chi-square statistic</h2>
+<div class="center">
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Outcome</th>
+<th style="text-align: center;">Observed</th>
+<th style="text-align: center;">Expected</th>
+<th style="text-align: center;"><span class="math inline">\(\frac{(O - E)^2}{E}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">53,222</td>
+<td style="text-align: center;">52,612</td>
+<td style="text-align: center;"><span class="math inline">\(\frac{(53,222 - 52,612)^2}{52,612} = 7.07\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="fragment" data-fragment-index="2">2</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="2">52,118</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="2">52,612</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="2"><span class="math inline">\(\frac{(52,118 - 52,612)^2}{52,612} = 4.64\)</span></span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="fragment" data-fragment-index="2"><span class="fragment" data-fragment-index="3">3</span></span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="3">52,465</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="3">52,612</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="3"><span class="math inline">\(\frac{(52,465 - 52,612)^2}{52,612} = 0.41\)</span></span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="fragment" data-fragment-index="3"><span class="fragment" data-fragment-index="4">4</span></span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="4">52,338</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="4">52,612</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="4"><span class="math inline">\(\frac{(52,338 - 52,612)^2}{52,612} = 1.43\)</span></span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="fragment" data-fragment-index="4"><span class="fragment" data-fragment-index="5">5</span></span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="5">52,244</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="5">52,612</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="5"><span class="math inline">\(\frac{(52,244 - 52,612)^2}{52,612} = 2.57\)</span></span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="fragment" data-fragment-index="5"><span class="fragment" data-fragment-index="6">6</span></span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="6">53,285</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="6">52,612</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="6"><span class="math inline">\(\frac{(53,285 - 52,612)^2}{52,612} = 8.61\)</span>&nbsp;</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="fragment" data-fragment-index="6"><span class="fragment" data-fragment-index="7">Total</span></span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="7">315,672</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="7">315,672</span></td>
+<td style="text-align: center;"><span class="fragment" data-fragment-index="7">24.73</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Why square?</h2>
+<p>Squaring the difference between the observed and the expected outcome does two things:</p>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li>Any standardized difference that is squared will now be positive.</li>
+<li><span class="fragment li-frag" data-fragment-index="3">Differences that already looked unusual will become much larger after being squared.</span></li>
+</ul>
+</div>
+<div class="fragment" data-fragment-index="4">
+<div class="dq">
+<p>When have we seen this before?</p>
+</div>
+</div>
+<!-- subsection: The chi-square distribution and finding areas -->
+</section>
+<section class="slide level2">
+<h2>The chi-square distribution</h2>
+<ul>
+<li>In order to determine if the <span class="math inline">\(\chi^2\)</span> statistic we calculated is considered unusually high or not we need to first describe its distribution.</li>
+<li><span class="fragment li-frag" data-fragment-index="2">The chi-square distribution has just one parameter called <span class="hl">degrees of freedom (df)</span>, which influences the shape, center, and spread of the distribution.<br>
+</span></li>
+</ul>
+<div class="fragment" data-fragment-index="3">
+<div style="color: qremember">
+<p>So far we’ve seen three other continuous distributions:</p>
+<ul>
+<li>normal distribution: unimodal and symmetric with two parameters: mean and standard deviation</li>
+<li>T distribution: unimodal and symmetric with one parameter: degrees of freedom</li>
+<li>F distribution: unimodal and right skewed with two parameters: degrees of freedom or numerator (between group variance) and denominator (within group variance)</li>
+</ul>
+</div>
+</div>
+</section>
+<section class="slide level2">
+<h2>The chi-square distribution</h2>
+<div class="center">
+<p><img data-src="material/chiSquareDistributionWithInceasingDF.svg" style="width:70.0%"></p>
+</div>
+<p>As the df increases,</p>
+<ul>
+<li>the center of the <span class="math inline">\(\chi^2\)</span> distribution increases as well</li>
+<li>the variability of the <span class="math inline">\(\chi^2\)</span> distribution increases as well</li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Finding areas under the chi-square curve</h2>
+<ul>
+<li>p-value = tail area under the chi-square distribution (as usual)</li>
+<li><span class="fragment li-frag" data-fragment-index="2">For this we can use technology, or a chi-square probability table.</span></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Finding areas under the chi-square curve (cont.)</h2>
+<div class="dq">
+<p>Estimate the shaded area (above the cutoff value of 10) under the <span class="math inline">\(\chi^2\)</span> curve with <span class="math inline">\(df = 6\)</span>.</p>
+</div>
+<div class="fragment" data-fragment-index="2">
+<blockquote>
+<p>pchisq(q = 10, df = 6, lower.tail = FALSE) <span class="math inline">\(\phantom{aaaaaaa}\)</span> [1] 0.124652</p>
+</blockquote>
+</div>
+</section>
+<section class="slide level2">
+<h2>Finding areas under the chi-square curve (cont.)</h2>
+<div class="pq">
+<p>Estimate the shaded area (above the cutoff value of 17) under the <span class="math inline">\(\chi^2\)</span> curve with <span class="math inline">\(df = 9\)</span>.</p>
+</div>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="center">
+<p><img data-src="material/above17WithDF9.svg" style="width:67.0%"></p>
+</div>
+</div></div>
+<div class="fragment" data-fragment-index="2">
+<blockquote>
+<p>pchisq(q = 17, df = 9, lower.tail = FALSE) <span class="math inline">\(\phantom{aaaaaaa}\)</span> [1] 0.04871598</p>
+</blockquote>
+</div>
+</section>
+<section class="slide level2">
+<h2>Finding areas under the chi-square curve (one more)</h2>
+<div class="pq">
+<p>Estimate the shaded area (above 30) under the <span class="math inline">\(\chi^2\)</span> curve with <span class="math inline">\(df = 10\)</span>.</p>
+</div>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="center">
+<p><img data-src="material/above30WithDF10.svg" style="width:67.0%"></p>
+</div>
+</div></div>
+<div class="fragment" data-fragment-index="2">
+<blockquote>
+<p>pchisq(q = 30, df = 10, lower.tail = FALSE) <span class="math inline">\(\phantom{aaaaaaa}\)</span> [1] 0.0008566412</p>
+</blockquote>
+</div>
+<!-- subsection: Finding a p-value for a chi-square test -->
+</section>
+<section class="slide level2">
+<h2>Back to Labby’s dice</h2>
+<ul>
+<li><p>The research question was: Do these data provide convincing evidence of an inconsistency between the observed and expected counts?</p></li>
+<li><div class="fragment li-frag" data-fragment-index="2">
+<p>The hypotheses were:</p>
+<ul>
+<li>There is no inconsistency between the observed and the expected counts. The observed counts follow the same distribution as the expected counts.</li>
+<li>There is an inconsistency between the observed and the expected counts. The observed counts <span class="orange">do not</span> follow the same distribution as the expected counts. There is a bias in which side comes up on the roll of a die.</li>
+</ul>
+</div></li>
+<li><p><span class="fragment li-frag" data-fragment-index="3">We had calculated a test statistic of <span class="orange"><span class="math inline">\(\chi^2 = 24.67\)</span></span>.</span></p></li>
+<li><p><span class="fragment li-frag" data-fragment-index="4">All we need is the <span class="math inline">\(df\)</span> and we can calculate the tail area (the p-value) and make a decision on the hypotheses.</span></p></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Degrees of freedom for a goodness of fit test</h2>
+<ul>
+<li>When conducting a goodness of fit test to evaluate how well the observed data follow an expected distribution, the degrees of freedom are calculated as the number of cells (<span class="math inline">\(k\)</span>) minus 1. <span class="math display">\[\color{#0DA6FF}{{df = k - 1}}\]</span></li>
+<li><span class="fragment li-frag" data-fragment-index="2">For dice outcomes, <span class="math inline">\(k = 6\)</span>, therefore <span class="math display">\[df = 6 - 1 = 5\]</span></span></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Finding a p-value for a chi-square test</h2>
+<p>The <span class="hl">p-value</span> for a chi-square test is defined as the <span class="hl">tail area above the calculated test statistic</span>.</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="center">
+<p><img data-src="material/above24Point67WithDF5.svg" style="width:67.0%"></p>
+</div>
+</div><div class="column" style="width:40%;">
+<p>p-value = <span class="math inline">\(P(\chi^2_{df = 5} &gt; 24.67)\)</span><br>
+is less than 0.001</p>
+</div></div>
+</section>
+<section class="slide level2 scrollable">
+<h2>Conclusion of the hypothesis test</h2>
+<div class="pq">
+<p>We calculated a p-value less than 0.001. At 5% significance level, what is the conclusion of the hypothesis test?</p>
+</div>
+<ol type="a">
+<li>Reject <span class="math inline">\(H_0\)</span>, the data provide convincing evidence that the dice are fair.</li>
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2">Reject <span class="math inline">\(H_0\)</span>, the data provide convincing evidence that the dice are biased.</span></li>
+<li>Fail to reject <span class="math inline">\(H_0\)</span>, the data provide convincing evidence that the dice are fair.</li>
+<li>Fail to reject <span class="math inline">\(H_0\)</span>, the data provide convincing evidence that the dice are biased.</li>
+</ol>
+<div class="participate">
+<p>[Participate ⟹ <a href="https://strawpoll.live">strawpoll.live</a> and use the code 833295]</p>
+</div>
+</section>
+<section class="slide level2">
+<h2>Turns out…</h2>
+<ul>
+<li>The 1-6 axis is consistently shorter than the other two (2-5 and 3-4), thereby supporting the hypothesis that the faces with one and six pips are larger than the other faces.</li>
+<li>Pearson’s claim that 5s and 6s appear more often due to the carved-out pips is not supported by these data.</li>
+<li>Dice used in casinos have flush faces, where the pips are filled in with a plastic of the same density as the surrounding material and are precisely balanced.</li>
+</ul>
+<div class="center">
+<p><img data-src="material/regular.jpeg" style="width:30.0%"> <img data-src="material/casino.jpeg" style="width:30.0%"></p>
+</div>
+</section>
+<section class="slide level2">
+<h2>Recap: p-value for a chi-square test</h2>
+<ul>
+<li>The p-value for a chi-square test is defined as the tail area <span class="hl">above</span> the calculated test statistic.</li>
+<li>This is because the test statistic is always positive, and a higher test statistic means a stronger deviation from the null hypothesis.</li>
+</ul>
+<div class="center">
+<p><img data-src="material/genericChiSquare.svg" style="width:70.0%"></p>
+</div>
+</section>
+<section class="slide level2 scrollable">
+<h2>Conditions for the chi-square test</h2>
+<ol type="1">
+<li><span class="hlGr">Independence:</span> Each case that contributes a count to the table must be independent of all the other cases in the table.</li>
+<li><span class="fragment li-frag" data-fragment-index="2"><span class="hlGr">Sample size:</span> Each particular scenario (i.e.&nbsp;cell) must have at least 5 <span class="orange">expected</span> cases.</span></li>
+<li><span class="fragment li-frag" data-fragment-index="3"><span class="hlGr">df <span class="math inline">\(&gt;\)</span> 1:</span> Degrees of freedom must be greater than 1.</span></li>
+</ol>
+<div class="fragment" data-fragment-index="3">
+<p><span class="fragment" data-fragment-index="4">Failing to check conditions may unintentionally affect the test’s error rates.</span></p>
+</div>
+<!-- subsection: 2009 Iran Election -->
+</section>
+<section class="slide level2">
+<h2>2009 Iran Election</h2>
+<div class="dq">
+<p>There was lots of talk of election fraud in the 2009 Iran election. We’ll compare the data from a poll conducted before the election (observed data) to the reported votes in the election to see if the two follow the same distribution.</p>
+</div>
+<div class="center">
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;">Observed # of</td>
+<td style="text-align: right;">Reported % of</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Candidate</td>
+<td style="text-align: right;">voters in poll</td>
+<td style="text-align: right;">votes in election</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(1) Ahmedinajad</td>
+<td style="text-align: right;">338</td>
+<td style="text-align: right;">63.29%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(2) Mousavi</td>
+<td style="text-align: right;">136</td>
+<td style="text-align: right;">34.10%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(3) Minor candidates</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">2.61%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">504</td>
+<td style="text-align: right;">100%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"><span class="fragment" data-fragment-index="2"><span class="hl"><span class="math inline">\(\downarrow\)</span></span></span></td>
+<td style="text-align: right;"><span class="fragment" data-fragment-index="2"><span class="hl"><span class="math inline">\(\downarrow\)</span></span></span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"><span class="fragment" data-fragment-index="2"><span class="hl">observed</span></span></td>
+<td style="text-align: right;"><span class="fragment" data-fragment-index="2"><span class="hl">expected</span></span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><span class="fragment" data-fragment-index="2"><span class="hl">distribution</span></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Hypotheses</h2>
+<div class="dq">
+<p>What are the hypotheses for testing if the distributions of reported and polled votes are different?</p>
+</div>
+<div class="soln">
+<div class="fragment only" data-fragment-index="2">
+<ul>
+<li>The observed counts from the poll follow the same distribution as the reported votes.</li>
+<li>The observed counts from the poll do not follow the same distribution as the reported votes.</li>
+</ul>
+</div>
+</div>
+</section>
+<section class="slide level2">
+<h2>Calculation of the test statistic</h2>
+<div class="small">
+<div class="center">
+<table class="caption-top">
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;">Observed # of</td>
+<td style="text-align: right;">Reported % of</td>
+<td style="text-align: right;">Expected # of</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Candidate</td>
+<td style="text-align: right;">voters in poll</td>
+<td style="text-align: right;">votes in election</td>
+<td style="text-align: right;">votes in poll</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(1) Ahmedinajad</td>
+<td style="text-align: right;">338</td>
+<td style="text-align: right;">63.29%</td>
+<td style="text-align: right;">504 <span class="math inline">\(\times\)</span> 0.6329 = 319</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(2) Mousavi</td>
+<td style="text-align: right;">136</td>
+<td style="text-align: right;">34.10%</td>
+<td style="text-align: right;">504 <span class="math inline">\(\times\)</span> 0.3410 = 172</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(3) Minor candidates</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">2.61%</td>
+<td style="text-align: right;">504 <span class="math inline">\(\times\)</span> 0.0261 = 13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">504</td>
+<td style="text-align: right;">100%</td>
+<td style="text-align: right;">504</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><span class="fragment" data-fragment-index="2"></span></p>
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+\frac{(O_1 - E_1)^2}{E_1} = \frac{(338 - 319)^2}{319} &amp;=&amp; 1.13 \\
+\phantom{\frac{(O_2 - E_2)^2}{E_2} = \frac{(136 - 172)^2}{172} }&amp;\phantom{=}&amp;\phantom{ 7.53} \\
+\phantom{\frac{(O_2 - E_2)^2}{E_2} = \frac{(30 - 13)^2}{13} }&amp;\phantom{=}&amp;\phantom{ 22.23} \\
+\phantom{\chi^2_{\color{#0DA6FF}{{df = 3 - 1 = 2}}} }&amp;\phantom{=}&amp;\phantom{ 30.89}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+\frac{(O_1 - E_1)^2}{E_1} = \frac{(338 - 319)^2}{319} &amp;=&amp; 1.13 \\
+\frac{(O_2 - E_2)^2}{E_2} = \frac{(136 - 172)^2}{172} &amp;=&amp; 7.53 \\
+\phantom{\frac{(O_2 - E_2)^2}{E_2} = \frac{(30 - 13)^2}{13} }&amp;\phantom{=}&amp;\phantom{ 22.23} \\
+\phantom{\chi^2_{\color{#0DA6FF}{{df = 3 - 1 = 2}}} }&amp;\phantom{=}&amp;\phantom{ 30.89}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="4">
+<p><span class="math display">\[\begin{eqnarray*}
+\frac{(O_1 - E_1)^2}{E_1} = \frac{(338 - 319)^2}{319} &amp;=&amp; 1.13 \\
+\frac{(O_2 - E_2)^2}{E_2} = \frac{(136 - 172)^2}{172} &amp;=&amp; 7.53 \\
+\frac{(O_2 - E_2)^2}{E_2} = \frac{(30 - 13)^2}{13} &amp;=&amp; 22.23 \\
+\phantom{\chi^2_{\color{#0DA6FF}{{df = 3 - 1 = 2}}} }&amp;\phantom{=}&amp;\phantom{ 30.89}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="5">
+<p><span class="math display">\[\begin{eqnarray*}
+\frac{(O_1 - E_1)^2}{E_1} = \frac{(338 - 319)^2}{319} &amp;=&amp; 1.13 \\
+\frac{(O_2 - E_2)^2}{E_2} = \frac{(136 - 172)^2}{172} &amp;=&amp; 7.53 \\
+\frac{(O_2 - E_2)^2}{E_2} = \frac{(30 - 13)^2}{13} &amp;=&amp; 22.23 \\
+\chi^2_{\color{#0DA6FF}{{df = 3 - 1 = 2}}} &amp;=&amp; 30.89
+\end{eqnarray*}\]</span></p>
+</div>
+</div>
+</section>
+<section class="slide level2 scrollable">
+<h2>Conclusion</h2>
+<div class="pq">
+<p>Based on these calculations what is the conclusion of the hypothesis test?</p>
+</div>
+<ol type="a">
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2">p-value is low, <span class="math inline">\(H_0\)</span> is rejected. The observed counts from the poll do <u>not</u> follow the same distribution as the reported votes.</span></li>
+<li>p-value is high, <span class="math inline">\(H_0\)</span> is not rejected. The observed counts from the poll follow the same distribution as the reported votes.</li>
+<li>p-value is low, <span class="math inline">\(H_0\)</span> is rejected. The observed counts from the poll follow the same distribution as the reported votes</li>
+<li>p-value is low, <span class="math inline">\(H_0\)</span> is not rejected. The observed counts from the poll do <u>not</u> follow the same distribution as the reported votes.</li>
+</ol>
+<div class="participate">
+<p>[Participate ⟹ <a href="https://strawpoll.live">strawpoll.live</a> and use the code 833295]</p>
+</div>
+</section></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Chi-square test of independence</h1>
+<!-- source: material/6-4_chisq_indep -->
+<!-- subsection: Popular kids -->
+</section>
+<section class="slide level2">
+<h2>Popular kids</h2>
+<div class="dq">
+<p>In the dataset <code>popular</code>, students in grades 4-6 were asked whether good grades, athletic ability, or popularity was most important to them. A two-way table separating the students by grade and by choice of most important factor is shown below. Do these data provide evidence to suggest that goals vary by grade?</p>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;"></th>
+<th style="text-align: right;">Grades</th>
+<th style="text-align: right;">Popular</th>
+<th style="text-align: right;">Sports</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(4^{th}\)</span></td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(5^{th}\)</span></td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(6^{th}\)</span></td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">32</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="center">
+<p><img data-src="material/popular_mosaic.svg" style="width:80.0%"></p>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+<h2>Chi-square test of independence</h2>
+<ul>
+<li><p>The hypotheses are:</p>
+<ul>
+<li>Grade and goals are independent. Goals do not vary by grade.</li>
+<li>Grade and goals are dependent. Goals vary by grade.</li>
+</ul></li>
+<li><div class="fragment li-frag" data-fragment-index="2">
+<p>The test statistic is calculated as <span class="math display">\[\chi^2_{df} = \sum_{i = 1}^{k} \frac{(O - E)^2}{E} \quad \text{ where } \quad df = (R - 1) \times (C - 1),\]</span> where <span class="math inline">\(k\)</span> is the number of cells, <span class="math inline">\(R\)</span> is the number of rows, and <span class="math inline">\(C\)</span> is the number of columns.</p>
+<div class="note">
+<p>We calculate <span class="math inline">\(df\)</span> differently for one-way and two-way tables.</p>
+</div>
+</div></li>
+<li><p><span class="fragment li-frag" data-fragment-index="3">The p-value is the area under the <span class="math inline">\(\chi^2_{df}\)</span> curve, above the calculated test statistic.</span></p></li>
+</ul>
+<!-- subsection: Expected counts in two-way tables -->
+</section>
+<section class="slide level2">
+<h2>Expected counts in two-way tables</h2>
+<div class="formula">
+<p>Expected counts in two-way tables</p>
+</div>
+<p><span class="math display">\[\text{Expected Count} = \frac{(\text{row total}) \times (\text{column total})}{\text{table total}}\]</span></p>
+<div class="fragment" data-fragment-index="2">
+<div class="small">
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;"></th>
+<th style="text-align: right;">Grades</th>
+<th style="text-align: right;">Popular</th>
+<th style="text-align: right;">Sports</th>
+<th style="text-align: right;">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(4^{th}\)</span></td>
+<td style="text-align: right;"><span class="orange">63</span></td>
+<td style="text-align: right;"><span class="green">31</span></td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">119</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(5^{th}\)</span></td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">176</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(6^{th}\)</span></td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">183</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">Total</td>
+<td style="text-align: right;">247</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">478</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><span class="fragment" data-fragment-index="3"></span></p>
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="4">
+<p><span class="math display">\[
+\phantom{\color{#FF8000}{\text{$E_{row~1, col~1} = \frac{119 \times 247}{478} = 61$}} \qquad
+\color{#009900}{\text{$E_{row~1, col~2} = \frac{119 \times 141}{478} = 35$}}}
+\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="4">
+<p><span class="math display">\[
+\color{#FF8000}{\text{$E_{row~1, col~1} = \frac{119 \times 247}{478} = 61$}} \qquad
+\color{#009900}{\text{$E_{row~1, col~2} = \frac{119 \times 141}{478} = 35$}}
+\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2 scrollable">
+<h2>Expected counts in two-way tables</h2>
+<div class="pq">
+<p>What is the expected count for the highlighted cell?</p>
+</div>
+<div class="small">
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;"></th>
+<th style="text-align: right;">Grades</th>
+<th style="text-align: right;">Popular</th>
+<th style="text-align: right;">Sports</th>
+<th style="text-align: right;">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(4^{th}\)</span></td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">119</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(5^{th}\)</span></td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;"><span class="orange">55</span></td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">176</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(6^{th}\)</span></td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">183</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">Total</td>
+<td style="text-align: right;">247</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">478</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:20%;">
+<ol type="a">
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2"><span class="math inline">\(\frac{176 \times 141}{478}\)</span></span></li>
+<li><span class="math inline">\(\frac{119 \times 141}{478}\)</span></li>
+<li><span class="math inline">\(\frac{176 \times 247}{478}\)</span></li>
+<li><span class="math inline">\(\frac{176 \times 478}{478}\)</span></li>
+</ol>
+</div><div class="column" style="width:80%;">
+<p><span class="soln"><span class="fragment only" data-fragment-index="2"><span class="orange"><span class="math inline">\(\rightarrow\)</span> 52<br>
+<span class="small">more than expected # of 5th graders</span><br>
+<span class="small">have a goal of being popular</span></span></span></span></p>
+</div></div>
+</section>
+<section class="slide level2">
+<h2>Calculating the test statistic in two-way tables</h2>
+<p>Expected counts are shown in <span class="ex">blue</span> next to the observed counts.</p>
+<div class="center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;"></th>
+<th style="text-align: right;">Grades</th>
+<th style="text-align: right;">Popular</th>
+<th style="text-align: right;">Sports</th>
+<th style="text-align: right;">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(4^{th}\)</span></td>
+<td style="text-align: right;">63 <span class="ex">61</span></td>
+<td style="text-align: right;">31 <span class="ex">35</span></td>
+<td style="text-align: right;">25 <span class="ex">23</span></td>
+<td style="text-align: right;">119</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><span class="math inline">\(5^{th}\)</span></td>
+<td style="text-align: right;">88 <span class="ex">91</span></td>
+<td style="text-align: right;">55 <span class="ex">52</span></td>
+<td style="text-align: right;">33 <span class="ex">33</span></td>
+<td style="text-align: right;">176</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">\(6^{th}\)</span></td>
+<td style="text-align: right;">96 <span class="ex">95</span></td>
+<td style="text-align: right;">55 <span class="ex">54</span></td>
+<td style="text-align: right;">32 <span class="ex">34</span></td>
+<td style="text-align: right;">183</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">Total</td>
+<td style="text-align: right;">247</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">478</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span class="fragment" data-fragment-index="2"></span></p>
+<div class="r-stack mathsteps">
+<div class="fragment fade-out" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+\chi^2 &amp;=&amp; \sum \frac{(63 - 61)^2}{61} + \frac{(31 - 35)^2}{35} + \cdots + \frac{(32 - 34)^2}{34} = 1.3121 \\
+\phantom{df }&amp;\phantom{=}&amp;\phantom{ (R - 1) \times (C - 1) = (3 - 1) \times (3 - 1) = 2 \times 2 = 4}
+\end{eqnarray*}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="3">
+<p><span class="math display">\[\begin{eqnarray*}
+\chi^2 &amp;=&amp; \sum \frac{(63 - 61)^2}{61} + \frac{(31 - 35)^2}{35} + \cdots + \frac{(32 - 34)^2}{34} = 1.3121 \\
+df &amp;=&amp; (R - 1) \times (C - 1) = (3 - 1) \times (3 - 1) = 2 \times 2 = 4
+\end{eqnarray*}\]</span></p>
+</div>
+</div>
+<!-- subsection: Results -->
+</section>
+<section class="slide level2 scrollable">
+<h2>Calculating the p-value</h2>
+<div class="pq">
+<p>Which of the following is the correct p-value for this hypothesis test? <span class="math display">\[\chi^2 = 1.3121 \qquad df = 4\]</span></p>
+</div>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="center">
+<p><img data-src="material/popular.svg" style="width:67.0%"></p>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="small">
+<ol type="a">
+<li><span class="solnmult fragment highlight-orange" data-fragment-index="2">more than 0.3</span></li>
+<li>between 0.3 and 0.2</li>
+<li>between 0.2 and 0.1</li>
+<li>between 0.1 and 0.05</li>
+<li>less than 0.001</li>
+</ol>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+<h2>Conclusion</h2>
+<div class="dq">
+<p>Do these data provide evidence to suggest that goals vary by grade?</p>
+</div>
+<ul>
+<li>Grade and goals are independent. Goals do not vary by grade.</li>
+<li>Grade and goals are dependent. Goals vary by grade.<br>
+</li>
+</ul>
+<p><span class="soln"><span class="fragment only" data-fragment-index="2">Since p-value is high, we fail to reject <span class="math inline">\(H_0\)</span>. The data do not provide convincing evidence that grade and goals are dependent. It doesn’t appear that goals vary by grade.</span></span></p>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>DSK803 · Chapter 6: Inference for categorical data</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="chp6_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="chp6_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="chp6_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="chp6_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="chp6_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="chp6_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="chp6_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="chp6_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="chp6_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="chp6_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"\u003ci class=\"fas fa-gear\">\u003c/i>","content":"\u003cul class=\"slide-menu-items\">\n\u003cli class=\"slide-tool-item active\" data-item=\"0\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\">\u003ckbd>f\u003c/kbd> Fullscreen\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"1\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\">\u003ckbd>s\u003c/kbd> Speaker View\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"2\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\">\u003ckbd>o\u003c/kbd> Slide Overview\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"3\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\">\u003ckbd>e\u003c/kbd> PDF Export Mode\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"4\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\">\u003ckbd>r\u003c/kbd> Scroll View Mode\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"5\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\">\u003ckbd>?\u003c/kbd> Keyboard Help\u003c/a>\u003c/li>\n\u003c/ul>"}],"openButton":true,"openButtonLabel":"Slide menu","numbers":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1024,
+
+        height: 768,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 5.0e-2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+          window.quartoDecorateExternalLinks = function (root) {
+         var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+              if (!link.classList.contains('no-external-icon')) {
+              }
+            }
+          }
+          };
+          window.quartoDecorateExternalLinks(window.document);
+        // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+        // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+        const hideOnEscAndFocusOut = {
+          name: 'hideOnEscAndFocusOut',
+          defaultValue: true,
+          fn(instance) {
+            const dismiss = () => {
+              // A show scheduled by the trigger delay would otherwise reopen it
+              instance.clearDelayTimeouts();
+              instance.hide();
+            };
+            const onKeyDown = (event) => {
+              if (event.key !== 'Escape') {
+                return;
+              }
+              // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+              // except an open reveal.js slide menu, which Esc should close too.
+              // The menu handles keys only when its keyboard option is on.
+              const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+                window.Reveal.getConfig().menu?.keyboard !== false;
+              if (!menuHandlesEsc) {
+                event.stopPropagation();
+              }
+              if (instance.popper.contains(window.document.activeElement)) {
+                // Disabled while refocusing so the focus trigger does not reopen it
+                instance.disable();
+                instance.reference.focus();
+                instance.enable();
+              }
+              dismiss();
+            };
+            const onFocusOut = (event) => {
+              const target = event.relatedTarget;
+              if (target && !instance.reference.contains(target) &&
+                  !instance.popper.contains(target)) {
+                dismiss();
+              }
+            };
+            // On the trigger too: a click trigger (code-annotations: select) has no
+            // blur handling. Attached for the instance's lifetime so leaving the
+            // trigger also cancels a show still pending on the trigger delay.
+            instance.reference.addEventListener('focusout', onFocusOut);
+            return {
+              onShow() {
+                window.document.addEventListener('keydown', onKeyDown, true);
+                instance.popper.addEventListener('focusout', onFocusOut);
+              },
+              onHide() {
+                window.document.removeEventListener('keydown', onKeyDown, true);
+                instance.popper.removeEventListener('focusout', onFocusOut);
+              },
+              onDestroy() {
+                instance.reference.removeEventListener('focusout', onFocusOut);
+              },
+            };
+          },
+        };
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+            plugins: [hideOnEscAndFocusOut],
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
